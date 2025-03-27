@@ -1,4 +1,4 @@
-package com.maxidev.boxsplash.navigation
+package com.maxidev.boxsplash.presentation.search
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -37,7 +37,6 @@ import com.maxidev.boxsplash.presentation.components.IconButtonComposable
 import com.maxidev.boxsplash.presentation.components.ImageComposable
 import com.maxidev.boxsplash.presentation.components.PagingStaggeredLazyScreenContent
 import com.maxidev.boxsplash.presentation.components.SearchBarComposable
-import com.maxidev.boxsplash.presentation.search.SearchViewModel
 import kotlinx.coroutines.launch
 
 @Composable

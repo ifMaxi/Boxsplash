@@ -5,6 +5,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.maxidev.boxsplash.presentation.home.HomeView
+import com.maxidev.boxsplash.presentation.search.SearchView
 import kotlinx.serialization.Serializable
 
 @Composable
