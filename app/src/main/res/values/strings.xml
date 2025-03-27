@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Boxsplash</string>
+    <string name="search">Search</string>
+    <string name="bookmarcks">Bookmarks</string>
+    <string name="settings">Settings</string>
+    <string name="clear_search">Clear search</string>
+    <string name="delete">Delete</string>
+</resources>
