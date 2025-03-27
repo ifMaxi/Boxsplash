@@ -16,6 +16,7 @@ import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemColors
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -26,6 +27,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -97,35 +99,14 @@ fun SearchView(
                         horizontalAlignment = Alignment.Start,
                         verticalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
+                        val historyIcon = Icons.Default.History
+
                         // TODO: Optimize recompositions
-                        // TODO: Create a reusable list item.
-                        // TODO: Make search ui state.
 
                         when {
                             input.isEmpty() -> {
                                 recent.recentHistory.forEach { element ->
-                                    ListItem(
-                                        headlineContent = {
-                                            Text(
-                                                text = element.input
-                                            )
-                                        },
-                                        leadingContent = {
-                                            Icon(
-                                                imageVector = Icons.Default.History,
-                                                contentDescription = null
-                                            )
-                                        },
-                                        trailingContent = {
-                                            IconButtonComposable(
-                                                icon = Icons.Default.Delete,
-                                                contentDescription = R.string.delete,
-                                                onClick = { viewModel.deleteInput(input) }
-                                            )
-                                        },
-                                        colors = ListItemDefaults.colors(
-                                            containerColor = Color.Transparent
-                                        ),
+                                    ListItemComposable(
                                         modifier = Modifier
                                             .clickable {
                                                 viewModel.onQueryChange(element.input)
@@ -133,7 +114,21 @@ fun SearchView(
                                                 expanded = false
                                             }
                                             .fillMaxWidth()
-                                            .padding(horizontal = 16.dp, vertical = 6.dp)
+                                            .padding(horizontal = 16.dp, vertical = 6.dp),
+                                        text = element.input,
+                                        icon = historyIcon,
+                                        trailingContent = {
+                                            IconButtonComposable(
+                                                icon = Icons.Default.Delete,
+                                                contentDescription = R.string.delete,
+                                                onClick = {
+                                                    viewModel.deleteInput(element.input)
+                                                }
+                                            )
+                                        },
+                                        colors = ListItemDefaults.colors(
+                                            containerColor = Color.Transparent
+                                        )
                                     )
                                 }
                             }
@@ -141,21 +136,7 @@ fun SearchView(
                                 filterRecent.searchHistory
                                     .filter { it.input.contains(input) }
                                     .forEach { element ->
-                                        ListItem(
-                                            headlineContent = {
-                                                Text(
-                                                    text = element.input
-                                                )
-                                            },
-                                            leadingContent = {
-                                                Icon(
-                                                    imageVector = Icons.Default.History,
-                                                    contentDescription = null
-                                                )
-                                            },
-                                            colors = ListItemDefaults.colors(
-                                                containerColor = Color.Transparent
-                                            ),
+                                        ListItemComposable(
                                             modifier = Modifier
                                                 .clickable {
                                                     viewModel.onQueryChange(element.input)
@@ -163,7 +144,13 @@ fun SearchView(
                                                     expanded = false
                                                 }
                                                 .fillMaxWidth()
-                                                .padding(horizontal = 16.dp, vertical = 6.dp)
+                                                .padding(horizontal = 16.dp, vertical = 6.dp),
+                                            text = element.input,
+                                            icon = historyIcon,
+                                            colors = ListItemDefaults.colors(
+                                                containerColor = Color.Transparent
+                                            )
+
                                         )
                                     }
                             }
@@ -187,4 +174,36 @@ fun SearchView(
             }
         )
     }
+}
+
+@Composable
+private fun ListItemComposable(
+    modifier: Modifier = Modifier,
+    text: String,
+    icon: ImageVector,
+    trailingContent: @Composable (() -> Unit)? = null,
+    colors: ListItemColors = ListItemDefaults.colors()
+) {
+    val color = if (colors != ListItemDefaults.colors()) {
+        colors.containerColor
+    } else {
+        Color.Transparent
+    }
+    // TODO: Personalize
+    ListItem(
+        modifier = modifier,
+        headlineContent = {
+            Text(
+                text = text
+            )
+        },
+        leadingContent = {
+            Icon(
+                imageVector = icon,
+                contentDescription = null
+            )
+        },
+        trailingContent = trailingContent,
+        colors = ListItemDefaults.colors(containerColor = color)
+    )
 }
