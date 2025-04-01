@@ -1,7 +1,9 @@
 package com.maxidev.boxsplash.di
 
+import com.maxidev.boxsplash.data.repository.PhotoDetailRepositoryImpl
 import com.maxidev.boxsplash.data.repository.PhotosRepositoryImpl
 import com.maxidev.boxsplash.data.repository.SearchRepositoryImpl
+import com.maxidev.boxsplash.domain.repository.PhotoDetailRepository
 import com.maxidev.boxsplash.domain.repository.PhotosRepository
 import com.maxidev.boxsplash.domain.repository.SearchRepository
 import dagger.Binds
@@ -18,4 +20,7 @@ abstract class RepositoryModule {
 
     @Binds
     abstract fun bindSearchRepository(impl: SearchRepositoryImpl): SearchRepository
+
+    @Binds
+    abstract fun bindPhotoDetailRepository(impl: PhotoDetailRepositoryImpl): PhotoDetailRepository
 }
