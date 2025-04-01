@@ -14,7 +14,8 @@ import coil3.compose.AsyncImage
 fun ImageComposable(
     modifier: Modifier = Modifier,
     image: String,
-    onClick: () -> Unit
+    contentScale: ContentScale,
+    onClick: () -> Unit = {}
 ) {
     Box(modifier = modifier) {
         Card(
@@ -24,7 +25,7 @@ fun ImageComposable(
             AsyncImage(
                 model = image,
                 contentDescription = null,
-                contentScale = ContentScale.Crop,
+                contentScale = contentScale,
                 modifier = Modifier
                     .fillMaxWidth()
             )
