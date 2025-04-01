@@ -12,18 +12,13 @@ data class PhotoIdDomain(
     val urls: UrlsDomain,
     val links: LinksDomain,
     val user: UserDomain,
-    val exif: ExifDomain,
-    val location: LocationDomain,
-    val tags: List<TagDomain>,
-    val relatedCollections: RelatedCollectionsDomain
+    val tags: List<String>
 ) {
     data class UserDomain(
         val id: String,
         val username: String,
         val name: String,
         val portfolioUrl: String,
-        val bio: String,
-        val location: String,
         val links: UserLinksDomain,
         val profileImage: ProfileImageDomain
     ) {
@@ -33,24 +28,7 @@ data class PhotoIdDomain(
             val portfolio: String
         )
         data class ProfileImageDomain(
-            val small: String,
-            val medium: String,
             val large: String
         )
-    }
-
-    data class RelatedCollectionsDomain(
-        val result: List<ResultDomain>
-    ) {
-        data class ResultDomain(
-            val id: String,
-            val title: String,
-            val totalPhotos: Int,
-            val previewPhotos: List<PreviewPhotoDomain>
-        ) {
-            data class PreviewPhotoDomain(
-                val urls: UrlsDomain
-            )
-        }
     }
 }
