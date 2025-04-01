@@ -26,11 +26,13 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.layout.ContentScale
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.maxidev.boxsplash.R
+import com.maxidev.boxsplash.navigation.PhotoDetailScreen
 import com.maxidev.boxsplash.navigation.SearchScreen
 import com.maxidev.boxsplash.presentation.components.CollectionCardComposable
 import com.maxidev.boxsplash.presentation.components.IconButtonComposable
@@ -59,7 +61,9 @@ fun HomeView(
                 HomeUiEvents.NavigateToSettings -> TODO()
                 is HomeUiEvents.NavigateToTopicContent -> TODO()
                 is HomeUiEvents.NavigateToCollectionContent -> TODO()
-                is HomeUiEvents.NavigateToPhotoDetail -> TODO()
+                is HomeUiEvents.NavigateToPhotoDetail -> {
+                    navController.navigate(PhotoDetailScreen(event.id))
+                }
             }
         }
     )
@@ -82,7 +86,7 @@ private fun ScreenContent(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             TopBarComposable(
-                title = R.string.app_name,
+                title = "Boxsplash",
                 actions = {
                     IconButtonComposable(
                         icon = Icons.Default.Search,
@@ -135,6 +139,7 @@ private fun ScreenContent(
                         content = {
                             ImageComposable(
                                 image = it.urls.small,
+                                contentScale = ContentScale.Crop,
                                 onClick = {
                                     onEvent(
                                         HomeUiEvents.NavigateToPhotoDetail(
