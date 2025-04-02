@@ -2,6 +2,7 @@
 
 package com.maxidev.boxsplash.presentation.detail
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.rememberTransformableState
@@ -22,8 +23,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Bookmark
@@ -91,13 +94,26 @@ fun DetailPhotoView(
     }
 
     LoadStatus(
-        resource = state
+        resource = state,
+        onEvents = { event ->
+            when (event) {
+                DetailUiEvents.NavigateBack -> {
+                    navController.popBackStack()
+                }
+                DetailUiEvents.OnDownload -> { /* TODO: Download logic. */ }
+                DetailUiEvents.OnShare -> { /* TODO: Share intent. */ }
+                DetailUiEvents.OpenInBrowser -> { /* TODO: Open in browser intent. */ }
+                is DetailUiEvents.SaveToBookMarks -> { /* TODO: Save into db. */ }
+                is DetailUiEvents.DeleteToBookMarks -> { /* TODO: Delete from db. */ }
+            }
+        }
     )
 }
 
 @Composable
 private fun LoadStatus(
-    resource: Resource<PhotoIdDomain>
+    resource: Resource<PhotoIdDomain>,
+    onEvents: (DetailUiEvents) -> Unit
 ) {
     // *
     when (resource) {
@@ -110,22 +126,17 @@ private fun LoadStatus(
         is Resource.Success<PhotoIdDomain> -> {
             ScreenContent(
                 photo = resource.data ?: return,
-                onBookmark = {},
-                onDownload = {},
-                onShare = {},
-                onOpenInBrowser = {}
+                onEvents = onEvents
             )
         }
     }
 }
 
+@SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
 private fun ScreenContent(
     photo: PhotoIdDomain,
-    onBookmark: () -> Unit,
-    onDownload: () -> Unit,
-    onShare: () -> Unit,
-    onOpenInBrowser: () -> Unit
+    onEvents: (DetailUiEvents) -> Unit
 ) {
     val sheetState = rememberModalBottomSheetState()
     val coroutineScope = rememberCoroutineScope()
@@ -137,18 +148,18 @@ private fun ScreenContent(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             TopBarComposable(
-                colors = TopAppBarDefaults.topAppBarColors(Color.Transparent),
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent),
                 actions = {
                     IconButtonComposable(
                         icon = Icons.Default.OpenInBrowser,
                         contentDescription = R.string.open_in_browser,
-                        onClick = onOpenInBrowser,
+                        onClick = { onEvents(DetailUiEvents.OpenInBrowser) },
                         tint = Color.White
                     )
                     IconButtonComposable(
                         icon = Icons.Default.Share,
                         contentDescription = R.string.share,
-                        onClick = onShare,
+                        onClick = { onEvents(DetailUiEvents.OnShare) },
                         tint = Color.White
                     )
                 },
@@ -157,9 +168,7 @@ private fun ScreenContent(
                         icon = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = R.string.back,
                         tint = Color.White,
-                        onClick = {
-                            /* Navigate back. */
-                        }
+                        onClick = { onEvents(DetailUiEvents.NavigateBack) }
                     )
                 },
                 scrollBehavior = scrollBehavior
@@ -175,7 +184,6 @@ private fun ScreenContent(
     ) { innerPadding ->
         Column(
             modifier = Modifier
-                //.fillMaxSize()
                 .consumeWindowInsets(innerPadding)
                 .background(color = Color.Black),
             horizontalAlignment = Alignment.CenterHorizontally
@@ -238,8 +246,8 @@ private fun ScreenContent(
                             color = photo.color,
                             description = photo.altDescription,
                             tags = photo.tags,
-                            onBookmark = onBookmark,
-                            onDownload = onDownload
+                            onBookmark = { /* TODO: Save and delete logic. */ },
+                            onDownload = { onEvents(DetailUiEvents.OnDownload) }
                         )
                     }
                 )
@@ -263,6 +271,7 @@ private fun SheetContent(
     onBookmark: () -> Unit,
     onDownload: () -> Unit
 ) {
+    val scrollState = rememberScrollState()
     val dateTimeConverter = convertDateTime(dateTime = createdAt)
     val toHex = Color(color.toColorInt())
     val textStyle = TextStyle().copy(
@@ -277,7 +286,8 @@ private fun SheetContent(
             modifier = Modifier
                 .wrapContentHeight(Alignment.Top)
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 8.dp),
+                .padding(horizontal = 16.dp, vertical = 8.dp)
+                .verticalScroll(scrollState),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
