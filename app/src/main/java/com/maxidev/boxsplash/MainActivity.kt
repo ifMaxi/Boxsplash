@@ -7,7 +7,10 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.material3.Surface
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import coil3.ImageLoader
 import coil3.PlatformContext
 import coil3.compose.setSingletonImageLoaderFactory
@@ -20,10 +23,13 @@ import coil3.request.allowHardware
 import coil3.request.allowRgb565
 import coil3.request.crossfade
 import coil3.util.DebugLogger
-import com.maxidev.boxsplash.navigation.NavGraph
+import com.maxidev.boxsplash.presentation.detail.DetailPhotoView
+import com.maxidev.boxsplash.presentation.home.HomeView
+import com.maxidev.boxsplash.presentation.search.SearchView
 import com.maxidev.boxsplash.presentation.theme.BoxsplashTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
+import kotlinx.serialization.Serializable
 import okio.FileSystem
 
 @AndroidEntryPoint
@@ -42,12 +48,40 @@ class MainActivity : ComponentActivity() {
                 setSingletonImageLoaderFactory { context -> getAsyncImageLoader(context) }
 
                 Surface {
-                    NavGraph(navController = navController)
+                    NavHost(
+                        navController = navController,
+                        startDestination = HomeScreen
+                    ) {
+                        composable<HomeScreen> {
+                            HomeView(
+                                navController = navController
+                            )
+                        }
+
+                        composable<SearchScreen> {
+                            SearchView(
+                                navController = navController
+                            )
+                        }
+
+                        composable<PhotoDetailScreen> { backStackEntry ->
+                            val args = backStackEntry.toRoute<PhotoDetailScreen>()
+
+                            DetailPhotoView(
+                                id = args.id,
+                                navController = navController
+                            )
+                        }
+                    }
                 }
             }
         }
     }
 }
+
+@Serializable data object HomeScreen
+@Serializable data object SearchScreen
+@Serializable data class PhotoDetailScreen(val id: String)
 
 private fun getAsyncImageLoader(context: PlatformContext): ImageLoader {
 
